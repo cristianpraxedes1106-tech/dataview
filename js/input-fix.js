@@ -1,25 +1,34 @@
 (() => {
   'use strict';
 
-  const $ = (s) => document.querySelector(s);
+  const $ = (selector) => document.querySelector(selector);
 
-  function openRepoModal() {
+  function openRepoModal(event) {
+    if (event) event.preventDefault();
+
     const welcome = $('#welcome');
     const modal = $('#newRepoModal');
+    const input = $('#newRepoName');
+
     if (welcome) welcome.classList.remove('show');
     if (!modal) return;
 
     modal.classList.add('show');
 
-    requestAnimationFrame(() => {
-      const input = $('#newRepoName');
-      if (input) {
-        input.disabled = false;
-        input.readOnly = false;
-        input.removeAttribute('aria-hidden');
-        input.focus();
-      }
-    });
+    if (input) {
+      input.disabled = false;
+      input.readOnly = false;
+      input.removeAttribute('disabled');
+      input.removeAttribute('readonly');
+      input.removeAttribute('aria-hidden');
+      input.style.pointerEvents = 'auto';
+      input.style.userSelect = 'text';
+
+      setTimeout(() => {
+        input.focus({ preventScroll: true });
+        input.select();
+      }, 30);
+    }
   }
 
   function closeRepoModal() {
@@ -47,7 +56,7 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', init, { once: true });
   } else {
     init();
   }
